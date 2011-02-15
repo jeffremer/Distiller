@@ -10,7 +10,7 @@ var
   path = require('path'),
   http = require('http'),
   url = require('url');
-  paperboy = require('./lib/node-paperboy/paperboy.js'),
+  paperboy = require('./lib/node-paperboy/lib/paperboy.js'),
 
   PORT = 8003,
   WEBROOT = path.join(path.dirname(__filename), 'webroot');
