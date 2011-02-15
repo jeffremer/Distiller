@@ -1,0 +1,3 @@
+[submodule "lib/restler"]
+	path = lib/restler
+	url = https://github.com/danwrong/restler.git
