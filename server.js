@@ -1,6 +1,6 @@
 Evaluator = {
 	get: function(url, options, callback) {
-		rest = require('./lib/restler/restler.js');		
+		rest = require('./lib/restler/lib/restler.js');		
 		rest.get(url, options).addListener('complete', callback).addListener('error', function(err) {console.log(err)});		
 	}
 };
