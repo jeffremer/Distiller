@@ -1,6 +1,0 @@
-[submodule "lib/restler"]
-	path = lib/restler
-	url = https://github.com/danwrong/restler.git
-[submodule "lib/node-paperboy"]
-	path = lib/node-paperboy
-	url = https://github.com/felixge/node-paperboy.git
