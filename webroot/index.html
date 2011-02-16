@@ -57,7 +57,11 @@
 					resultUrl += "&urlCode=" + encodeURIComponent($('#urlCode').val());
 				}
 				resultUrl += '&token=' + encodeURIComponent($('#token').val());
+				resultUrl += '&contentType=' + encodeURIComponent($('#contentType').val());
 				$('#resultUrl').val(resultUrl);
+				$('#resultUrlA').show();
+				$('#resultUrlA').html(resultUrl.substr(0,50) + '...');
+				$('#resultUrlA').attr('href', resultUrl);
 			});
 			return false;
 		}
@@ -85,7 +89,11 @@
 				<li>
 					<textarea name="urlCode" id="urlCode" class="short"></textarea>
 					<p class="right"><small>URL Transformation Code - Optional</small></p>	
-				</li>		
+				</li>
+				<li>
+					<label for="contentType">Output</label>
+					<input type="text" name="contentType" id="contentType" value="text/plain"/>
+				</li>						
 				<li>
 					<label for="username" id="Token">Token</label>
 					<input type="text" name="token" id="token" value="1234567890"/>
@@ -121,6 +129,7 @@
 					</li>
 					<li>
 						<input type="text" id="resultUrl" style="width: 100%;"/>
+						<a href="#" id="resultUrlA" style="display: none;">Result URL</a>
 						<p class="left"><small>API Call</small></p>	
 					</li>
 				</ul>

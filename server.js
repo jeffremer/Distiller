@@ -9,8 +9,9 @@ var
   sys = require('sys'),
   path = require('path'),
   http = require('http'),
-  url = require('url');
+  url = require('url'),
   paperboy = require('./lib/node-paperboy/lib/paperboy.js'),
+  _ = require('./lib/underscore.js'),
 
   PORT = 8003,
   WEBROOT = path.join(path.dirname(__filename), 'webroot');
@@ -34,7 +35,13 @@ http.createServer(function(request, response) {
       log(statCode, request.url, ip, msg);
     })
    	.otherwise(function(err){
-		var code, sourceUrl, token, username, password;
+		var code,
+			contentType = 'text/plain',
+			sourceUrl,
+			urlCode,
+			token,
+			username,
+			password;
 
 		var urlObj = url.parse(request.url, true);	
 		
@@ -75,6 +82,9 @@ http.createServer(function(request, response) {
 		try {
 			urlCode = urlObj.query["urlCode"];
 		} catch (err) {}
+		try {
+			contentType = urlObj.query["contentType"];
+		} catch (err) {}
 		
 		if(hasErrors) {
 			response.writeHead(401, {'Content-Type': 'text/plain'});
@@ -85,7 +95,8 @@ http.createServer(function(request, response) {
 			try {
 				var Script = process.binding('evals').Script;
 				var urlSandbox = {
-					URL: sourceUrl
+					URL: sourceUrl,
+					_: _
 				}
 				if(urlCode != undefined) {
 					Script.runInNewContext(urlCode, urlSandbox);
@@ -99,16 +110,17 @@ http.createServer(function(request, response) {
 				try {
 					var codeSandbox = {
 					      DATA: data,
-					      RETURN_VALUE: ''
+					      RETURN_VALUE: '',
+						  _:_
 					};
 					if(code != undefined) {
 						Script.runInNewContext(code, codeSandbox);
 					}
-					response.writeHead(200, {'Content-Type': 'text/plain'});
+					response.writeHead(200, {'Content-Type': contentType});
 					response.end(codeSandbox.RETURN_VALUE + '\n');
 				} catch (err) {
 					response.writeHead(500, {'Content-Type': 'text/plain'});	
-					console.log("Problem parsing JSON\n" + data);
+					console.log("Problem parsing JSON\n" + data + ' Error ' + err.message + "(" + err.stack + ")");
 					response.end('Error\n');
 				}
 			});
