@@ -109,7 +109,10 @@
 						</li>
 				
 						<li>
-							<textarea name="code" id="code">RESULT=JSON.stringify(DATA)</textarea>
+							<textarea name="code" id="code">
+// Number of recent "perfect" tweets
+RESULT=JSON.stringify({perfect:_.select(DATA, function(datum){return datum.text.length==140}).length, total:DATA.length})
+							</textarea>
 							<p class="right"><small>Code</small></p>	
 						</li>
 						<li>

@@ -125,7 +125,7 @@ http.createServer(function(request, response) {
 							success: true,
 							url: request.url.replace('/','').replace(/&sandbox=true/,'')
 						}
-						console.log(sys.inspect(resp));
+						//console.log(sys.inspect(resp));
 						response.end(JSON.stringify(resp));						
 					} else {
 						response.end(codeSandbox.RESULT + '\n');						
