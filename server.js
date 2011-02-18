@@ -9,7 +9,8 @@ var
   sys = require('sys'),
   path = require('path'),
   http = require('http'),
-  url = require('url');
+  url = require('url'),
+
   paperboy = require('./lib/node-paperboy/lib/paperboy.js'),
 
   PORT = 8003,
@@ -17,6 +18,7 @@ var
 
 http.createServer(function(request, response) {
   var ip = request.connection.remoteAddress;
+
   paperboy
     .deliver(WEBROOT, request, response)
     .addHeader('Expires', 300)
@@ -34,9 +36,12 @@ http.createServer(function(request, response) {
       log(statCode, request.url, ip, msg);
     })
    	.otherwise(function(err){
-		var code, sourceUrl, token, username, password;
-
-		var urlObj = url.parse(request.url, true);	
+		var code,
+			sourceUrl,
+			token,
+			username,
+			password,
+			urlObj = url.parse(request.url, true);	
 		
 		// Required query string parameters
 		var hasErrors = false;
@@ -75,7 +80,7 @@ http.createServer(function(request, response) {
 		try {
 			urlCode = urlObj.query["urlCode"];
 		} catch (err) {}
-		
+
 		if(hasErrors) {
 			response.writeHead(401, {'Content-Type': 'text/plain'});
 			response.end(errorString);
@@ -91,7 +96,7 @@ http.createServer(function(request, response) {
 					Script.runInNewContext(urlCode, urlSandbox);
 				}
 				sourceUrl = urlSandbox.URL;
-				console.log("Source URL" + sourceUrl);
+				console.log("Source URL " + sourceUrl);
 			} catch (err) {
 				console.log("Problem running code on sourceUrl\n" + err);
 			}
@@ -108,7 +113,7 @@ http.createServer(function(request, response) {
 					response.end(codeSandbox.RETURN_VALUE + '\n');
 				} catch (err) {
 					response.writeHead(500, {'Content-Type': 'text/plain'});	
-					console.log("Problem parsing JSON\n" + data);
+					console.log("Problem running code\n" + data, " Error " + err.stack);
 					response.end('Error\n');
 				}
 			});
