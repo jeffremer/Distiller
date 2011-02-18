@@ -45,6 +45,7 @@ http.createServer(function(request, response) {
 			token,
 			username,
 			password,
+			contentType = 'text/plain',
 			inSandbox = false,
 			urlObj = url.parse(request.url, true);	
 		
@@ -86,6 +87,9 @@ http.createServer(function(request, response) {
 			urlCode = urlObj.query["urlCode"];
 		} catch (err) {}
 		try {
+			contentType = urlObj.query["contentType"];
+		} catch (err) {}
+		try {
 			inSandbox = (urlObj.query["sandbox"] == "true");
 		} catch (err) {}
 
@@ -118,7 +122,7 @@ http.createServer(function(request, response) {
 					if(code != undefined) {
 						Script.runInNewContext(code, codeSandbox);
 					}
-					response.writeHead(200, {'Content-Type': 'text/plain'});
+					response.writeHead(200, {'Content-Type': contentType});
 					if(inSandbox) {
 						var resp = {
 							result: codeSandbox.RESULT,
