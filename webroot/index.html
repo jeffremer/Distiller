@@ -13,9 +13,13 @@
 			width: 600px;
 			margin: 0 auto;
 		}
+		#main fieldset {
+			border: 0;
+		}
 		#main fieldset ul, #main fieldset ul li {
 			list-style-type: none;
 			margin: 0;
+			width: 100%;
 			padding: 0 0 5px 0;
 		}
 		#main fieldset textarea {
@@ -31,11 +35,13 @@
 			width: 6em;
 		}
 		#main fieldset input.url {
-			width: 43em;
-			float: right;
+			width: 100%;
 		}
 		#main fieldset label.url {
 			width: 2em;
+		}
+		p {
+			margin-top: 0.2em;
 		}
 		p.right {
 			text-align: right;
@@ -48,6 +54,8 @@
 		}
 	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/themes/base/jquery-ui.css" type="text/css" media="all" /> 
 	<script type="text/javascript">
 		function go() {
 			$.getJSON(
@@ -58,77 +66,109 @@
 					$('#resultUrl').val([window.location.href,data.url].join(''));
 					$('#resultUrlLink').show();
 					$('#resultUrlLink').attr('href',[window.location.href,data.url].join(''));
+					$('#tabs').tabs('select',2);
 				}
 			);    
 			return false;
 		}
+		
+		$(document).ready(function() {
+			var tabs = $('#tabs').tabs();
+			$("#data input:button, button").button();
+			$('#about button').click(function(){
+				$('#help').toggle();
+			});
+		});
 	</script>
 </head>
 <body>
 	<div id="main">
-		<h1>Distill.me</h1>
-		<p>Distill.me is a javascript aware content proxy.  Pass in a URL - distiller will download the content
-			and assign the body to a special variable named DATA.  Use the DATA variable in a set of javascript
-			statements and assign your final result to RESULT.  XML and JSON are automatically parsed.
+		
+		<h1 id="title">Distill.me</h1>
+		
+		<p id="about">Distill.me is a javascript aware content proxy. <button>What the hack?</button></p>
+		
+		<p id="help" style="display: none;"> Pass in a URL - distiller will download the content
+			and assign the body to a special variable named DATA. Use the DATA variable in a set of javascript
+			statements and assign your final result to RESULT. XML and JSON are automatically parsed.
 			Your javascript block will run on the server and then display the result of your transformation below.</p>
-		<form method="GET" action="/eval" id="data" onsubmit="submit()">
-			<fieldset>
-			<ul>
-				<li>
-					<label for="url" class="url">URL</label>
-					<input type="text" name="url" class="url" id="url" placeholder="URL" value="http://api.twitter.com/1/statuses/user_timeline.json?screen_name=jeffremer"/>
-					<div style="clear:both;"></div>
-				</li>
+		<form method="GET" action="/eval" id="data" onsubmit="go()">
 				
-				<li>
-					<textarea name="code" id="code">RESULT=JSON.stringify(DATA)</textarea>
-					<p class="right"><small>Code</small></p>	
-				</li>
-				<li>
-					<textarea name="urlCode" id="urlCode" class="short"></textarea>
-					<p class="right"><small>URL Transformation Code - Optional</small></p>	
-				</li>		
-				<li>
-					<label for="username" id="Token">Token</label>
-					<input type="text" name="token" id="token" value="1234567890"/>
-				</li>
-				<li>
-					Basic AUTH<br>
-					<small>Optional, if your end point requires authorization enter your credentials here.</small>
-				</li>
-				<li>
-					<label for="username" >Username</label>
-					<input type="text" id="username" name="username"/>
-				</li>
-				<li>
-					<label for="password">Password</label>
-					<input type="text" id="password" name="password"/>
-				</li>
-	
-				<li>
-					<p class="right">
-						<input type="hidden" name="sandbox" value="true"/>
-						<input type="button" value="Submit" onclick="go(); return false;">
-					</p>
-				</li>
-			</ul>
-			</fieldset>
-		</form>
-		<h2>Result</h2>
-		<form>
-			<fieldset>
+			<div id="tabs">
 				<ul>
-					<li>
-						<textarea id="result"></textarea>
-						<p class="left"><small>Evaluated Code</small></p>	
-					</li>
-					<li>
-						<input type="text" id="resultUrl" style="width: 100%;"/>
-						<p class="left"><small>API Call</small><a href="#" style="display: none;" id="resultUrlLink" target="_blank">&nbsp;&rarr;</a></p>	
-					</li>
+					<li><a href="#input">Input</a></li>
+					<li><a href="#advanced">Advanced</a></li>
+					<li><a href="#output">Output</a></li>										
 				</ul>
-			</fieldset>
+				<div id="input">			
+					<fieldset id="options">
+					<ul>
+						<li>
+							<input type="text" name="url" class="url" id="url" placeholder="URL" value="http://api.twitter.com/1/statuses/user_timeline.json?screen_name=jeffremer"/>
+							<div style="clear:both;"></div>
+						</li>
+				
+						<li>
+							<textarea name="code" id="code">RESULT=JSON.stringify(DATA)</textarea>
+							<p class="right"><small>Code</small></p>	
+						</li>
+						<li>
+							<p class="right">
+								<input type="hidden" name="sandbox" value="true"/>
+								<input type="button" value="Go" onclick="go(); return false;">
+							</p>
+						</li>
+					 </ul>
+					</fieldset>
+				</div>
+				<div id="advanced">			
+					<fieldset>
+					<ul>
+						<li>
+							<textarea name="urlCode" id="urlCode" class="short"></textarea>
+							<p class="right"><small>URL Transformation Code - Optional</small></p>	
+						</li>		
+						<li>
+							<label for="username" id="Token">Token</label>
+							<input type="text" name="token" id="token" value="1234567890"/>
+						</li>
+						<li>
+							Basic AUTH<br>
+							<small>Optional, if your end point requires authorization enter your credentials here.</small>
+						</li>
+						<li>
+							<label for="username" >Username</label>
+							<input type="text" id="username" name="username"/>
+						</li>
+						<li>
+							<label for="password">Password</label>
+							<input type="text" id="password" name="password"/>
+						</li>
+						<li>
+							<p class="right">
+								<input type="button" value="Go" onclick="go(); return false;">
+							</p>
+						</li>
+					</ul>
+					</fieldset>
+				</div>
+				<div id="output">
+					<fieldset>
+						<ul>
+							<li>
+								<textarea id="result"></textarea>
+								<p class="left"><small>Evaluated Code</small></p>	
+							</li>
+							<li>
+								<input type="text" id="resultUrl" style="width: 100%;"/>
+								<p class="left"><small>API Call</small><a href="#" style="display: none;" id="resultUrlLink" target="_blank">&nbsp;&rarr;</a></p>	
+							</li>
+						</ul>
+					</fieldset>
+				</div>			
+            </div>
 		</form>
+ 
 	</div>
 </body>
 </html>
