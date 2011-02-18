@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
-	<title>Evaluator</title>
+	<title>Distill.me</title>
 	<style>
 		body {
 			font-family:"Lucida Grande",TrebuchetMS,"Trebuchet MS","Helvetica Neue",Verdana,Helvetica,Arial,sans-serif;
@@ -43,43 +43,45 @@
 		p.left {
 			text-align: left;
 		}
+		a {
+			text-decoration: none;
+		}
 	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function go() {
-			$('#result').load('/eval', $('#data').serialize(), function() {
-				var resultUrl = '/eval?url=' + encodeURIComponent($('#url').val()) + '&code=' + encodeURIComponent($('#code').val());
-				if($('#username').val() && $('#password').val()) {
-					resultUrl += '&username=' + encodeURIComponent($('#username').val());
-					resultUrl += '&password=' + encodeURIComponent($('#password').val());
+			$.getJSON(
+				'/eval',
+				$('#data').serialize(), 
+				function(data) {				
+					$('#result').val(data.result);					
+					$('#resultUrl').val([window.location.href,data.url].join(''));
+					$('#resultUrlLink').show();
+					$('#resultUrlLink').attr('href',[window.location.href,data.url].join(''));
 				}
-				if($('#urlCode').val()) {
-					resultUrl += "&urlCode=" + encodeURIComponent($('#urlCode').val());
-				}
-				resultUrl += '&token=' + encodeURIComponent($('#token').val());
-				$('#resultUrl').val(resultUrl);
-			});
+			);    
 			return false;
 		}
 	</script>
 </head>
 <body>
 	<div id="main">
-		<h1>Evaluator</h1>
-		<p>Evaluator is a javascript aware content proxy.  Pass in a URL - evaluator will download the content
+		<h1>Distill.me</h1>
+		<p>Distill.me is a javascript aware content proxy.  Pass in a URL - distiller will download the content
 			and assign the body to a special variable named DATA.  Use the DATA variable in a set of javascript
-			 statements and assign your final result to RETURN_VALUE.  XML and JSON are automatically parsed.  Evaluator will run your javascript block on the server and then display the result of your transformation below.</p>
+			statements and assign your final result to RESULT.  XML and JSON are automatically parsed.
+			Your javascript block will run on the server and then display the result of your transformation below.</p>
 		<form method="GET" action="/eval" id="data" onsubmit="submit()">
 			<fieldset>
 			<ul>
 				<li>
 					<label for="url" class="url">URL</label>
-					<input type="text" name="url" class="url" id="url" placeholder="URL"/>
+					<input type="text" name="url" class="url" id="url" placeholder="URL" value="http://api.twitter.com/1/statuses/user_timeline.json?screen_name=jeffremer"/>
 					<div style="clear:both;"></div>
 				</li>
 				
 				<li>
-					<textarea name="code" id="code"></textarea>
+					<textarea name="code" id="code">RESULT=JSON.stringify(DATA)</textarea>
 					<p class="right"><small>Code</small></p>	
 				</li>
 				<li>
@@ -105,6 +107,7 @@
 	
 				<li>
 					<p class="right">
+						<input type="hidden" name="sandbox" value="true"/>
 						<input type="button" value="Submit" onclick="go(); return false;">
 					</p>
 				</li>
@@ -121,7 +124,7 @@
 					</li>
 					<li>
 						<input type="text" id="resultUrl" style="width: 100%;"/>
-						<p class="left"><small>API Call</small></p>	
+						<p class="left"><small>API Call</small><a href="#" style="display: none;" id="resultUrlLink" target="_blank">&nbsp;&rarr;</a></p>	
 					</li>
 				</ul>
 			</fieldset>

@@ -41,6 +41,7 @@ http.createServer(function(request, response) {
 			token,
 			username,
 			password,
+			inSandbox = false,
 			urlObj = url.parse(request.url, true);	
 		
 		// Required query string parameters
@@ -80,6 +81,9 @@ http.createServer(function(request, response) {
 		try {
 			urlCode = urlObj.query["urlCode"];
 		} catch (err) {}
+		try {
+			inSandbox = (urlObj.query["sandbox"] == "true");
+		} catch (err) {}
 
 		if(hasErrors) {
 			response.writeHead(401, {'Content-Type': 'text/plain'});
@@ -104,13 +108,23 @@ http.createServer(function(request, response) {
 				try {
 					var codeSandbox = {
 					      DATA: data,
-					      RETURN_VALUE: ''
+					      RESULT: ''
 					};
 					if(code != undefined) {
 						Script.runInNewContext(code, codeSandbox);
 					}
 					response.writeHead(200, {'Content-Type': 'text/plain'});
-					response.end(codeSandbox.RETURN_VALUE + '\n');
+					if(inSandbox) {
+						var resp = {
+							result: codeSandbox.RESULT,
+							success: true,
+							url: request.url.replace('/','').replace(/&sandbox=true/,'')
+						}
+						console.log(sys.inspect(resp));
+						response.end(JSON.stringify(resp));						
+					} else {
+						response.end(codeSandbox.RESULT + '\n');						
+					}   				
 				} catch (err) {
 					response.writeHead(500, {'Content-Type': 'text/plain'});	
 					console.log("Problem running code\n" + data, " Error " + err.stack);
