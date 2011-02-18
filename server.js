@@ -14,7 +14,11 @@ var
   paperboy = require('./lib/node-paperboy/lib/paperboy.js'),
 
   PORT = 8003,
-  WEBROOT = path.join(path.dirname(__filename), 'webroot');
+  WEBROOT = path.join(path.dirname(__filename), 'webroot')
+
+  _ = require('./lib/underscore.js');
+
+  
 
 http.createServer(function(request, response) {
   var ip = request.connection.remoteAddress;
@@ -108,7 +112,8 @@ http.createServer(function(request, response) {
 				try {
 					var codeSandbox = {
 					      DATA: data,
-					      RESULT: ''
+					      RESULT: '',
+						  _:_
 					};
 					if(code != undefined) {
 						Script.runInNewContext(code, codeSandbox);
