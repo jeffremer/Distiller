@@ -1,6 +1,6 @@
 Evaluator = {
 	get: function(url, options, callback) {
-		rest = require('./lib/restler/lib/restler.js');		
+		rest = require('./lib/restler/restler.js');		
 		rest.get(url, options).addListener('complete', callback).addListener('error', function(err) {console.log(err)});		
 	}
 };
@@ -91,7 +91,7 @@ http.createServer(function(request, response) {
 					Script.runInNewContext(urlCode, urlSandbox);
 				}
 				sourceUrl = urlSandbox.URL;
-				console.log("Source URL " + sourceUrl);
+				console.log("Source URL" + sourceUrl);
 			} catch (err) {
 				console.log("Problem running code on sourceUrl\n" + err);
 			}
@@ -120,5 +120,5 @@ function log(statCode, url, ip,err) {
   var logStr = statCode + ' - ' + url + ' - ' + ip
   if (err)
     logStr += ' - ' + err;
-  console.log(logStr);
+  sys.log(logStr);
 }
